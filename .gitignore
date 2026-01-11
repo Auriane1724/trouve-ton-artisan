@@ -1,0 +1,27 @@
+# OS / éditeurs
+.DS_Store
+.vscode/
+
+# Dépendances
+node_modules/
+**/node_modules/
+
+# Builds
+dist/
+build/
+
+# Env
+.env
+**/.env
+.env.*
+**/.env.*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Divers
+coverage/
