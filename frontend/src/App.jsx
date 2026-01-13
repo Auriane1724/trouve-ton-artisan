@@ -6,6 +6,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
+  const [selectedArtisan, setSelectedArtisan] = useState(null);
 
   useEffect(() => {
     const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
@@ -116,7 +117,7 @@ export default function App() {
                   background: "white",
                   cursor: "pointer",
                 }}
-                onClick={() => (window.location.href = `#contact-${a.id}`)}
+                onClick={() => setSelectedArtisan(a)}
               >
                 Contacter cet artisan
               </button>
@@ -124,6 +125,74 @@ export default function App() {
           ))}
         </ul>
       </main>
+      {selectedArtisan && (
+        <section
+          style={{
+            marginTop: 40,
+            padding: 20,
+            border: "1px solid #ddd",
+            borderRadius: 12,
+            maxWidth: 600,
+            marginInline: "auto",
+          }}
+        >
+          <h2>
+            Contacter {selectedArtisan.prenom} {selectedArtisan.nom}
+          </h2>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              alert(
+                "Formulaire prêt. L’envoi d’email sera branché à l’étape suivante."
+              );
+            }}
+          >
+            <input
+              required
+              placeholder="Votre nom"
+              style={{ width: "100%", padding: 10, marginBottom: 10 }}
+            />
+
+            <input
+              required
+              type="email"
+              placeholder="Votre email"
+              style={{ width: "100%", padding: 10, marginBottom: 10 }}
+            />
+
+            <select
+              required
+              style={{ width: "100%", padding: 10, marginBottom: 10 }}
+            >
+              <option value="">Type de demande</option>
+              <option>Renseignement</option>
+              <option>Prestation</option>
+              <option>Tarif</option>
+            </select>
+
+            <textarea
+              required
+              placeholder="Votre message"
+              rows={4}
+              style={{ width: "100%", padding: 10, marginBottom: 10 }}
+            />
+
+            <button
+              type="submit"
+              style={{
+                padding: "10px 14px",
+                borderRadius: 10,
+                border: "1px solid #ccc",
+                background: "#fff",
+                cursor: "pointer",
+              }}
+            >
+              Envoyer la demande
+            </button>
+          </form>
+        </section>
+      )}
 
       <footer
         style={{
