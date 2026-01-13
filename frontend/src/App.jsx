@@ -38,7 +38,6 @@ export default function App() {
 
   return (
     <div style={{ fontFamily: "system-ui" }}>
-      {/* HEADER */}
       <header
         style={{
           display: "flex",
@@ -51,7 +50,7 @@ export default function App() {
         <img
           src={logoRegion}
           alt="Région Auvergne-Rhône-Alpes"
-          style={{ height: 40 }}
+          style={{ height: 42 }}
         />
         <div>
           <h1 style={{ margin: 0, fontSize: 22 }}>
@@ -64,7 +63,6 @@ export default function App() {
       </header>
 
       <main style={{ padding: 20, maxWidth: 900, margin: "0 auto" }}>
-        {/* RECHERCHE */}
         <label style={{ display: "block", marginBottom: 8 }}>
           Rechercher un artisan (nom, ville, métier)
         </label>
@@ -85,7 +83,6 @@ export default function App() {
           {filtered.length} artisan(s) trouvé(s)
         </p>
 
-        {/* LISTE */}
         <ul style={{ listStyle: "none", padding: 0, display: "grid", gap: 12 }}>
           {filtered.map((a) => (
             <li
@@ -128,7 +125,6 @@ export default function App() {
           ))}
         </ul>
 
-        {/* FORMULAIRE */}
         {selectedArtisan && (
           <section
             style={{
@@ -178,7 +174,6 @@ export default function App() {
                   border: "1px solid #ddd",
                 }}
               />
-
               <input
                 required
                 type="email"
@@ -192,10 +187,10 @@ export default function App() {
                   border: "1px solid #ddd",
                 }}
               />
-
               <select
                 required
                 name="type"
+                defaultValue=""
                 style={{
                   width: "100%",
                   padding: 10,
@@ -203,7 +198,6 @@ export default function App() {
                   borderRadius: 10,
                   border: "1px solid #ddd",
                 }}
-                defaultValue=""
               >
                 <option value="" disabled>
                   Type de demande
@@ -212,7 +206,6 @@ export default function App() {
                 <option value="prestation">Prestation</option>
                 <option value="tarif">Tarif</option>
               </select>
-
               <textarea
                 required
                 name="message"
@@ -226,7 +219,6 @@ export default function App() {
                   border: "1px solid #ddd",
                 }}
               />
-
               <button
                 type="submit"
                 style={{
