@@ -38,6 +38,7 @@ export default function App() {
 
   return (
     <div style={{ fontFamily: "system-ui" }}>
+      {/* HEADER */}
       <header
         style={{
           display: "flex",
@@ -57,12 +58,13 @@ export default function App() {
             Plateforme des artisans – Auvergne-Rhône-Alpes
           </h1>
           <p style={{ margin: 0, color: "#666" }}>
-            Trouvez un artisan et demandez un renseignement ou un devis
+            Trouvez un artisan et demandez un renseignement / prestation / tarif
           </p>
         </div>
       </header>
 
       <main style={{ padding: 20, maxWidth: 900, margin: "0 auto" }}>
+        {/* RECHERCHE */}
         <label style={{ display: "block", marginBottom: 8 }}>
           Rechercher un artisan (nom, ville, métier)
         </label>
@@ -83,6 +85,7 @@ export default function App() {
           {filtered.length} artisan(s) trouvé(s)
         </p>
 
+        {/* LISTE */}
         <ul style={{ listStyle: "none", padding: 0, display: "grid", gap: 12 }}>
           {filtered.map((a) => (
             <li
@@ -124,75 +127,122 @@ export default function App() {
             </li>
           ))}
         </ul>
-      </main>
-      {selectedArtisan && (
-        <section
-          style={{
-            marginTop: 40,
-            padding: 20,
-            border: "1px solid #ddd",
-            borderRadius: 12,
-            maxWidth: 600,
-            marginInline: "auto",
-          }}
-        >
-          <h2>
-            Contacter {selectedArtisan.prenom} {selectedArtisan.nom}
-          </h2>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              alert(
-                "Formulaire prêt. L’envoi d’email sera branché à l’étape suivante."
-              );
+        {/* FORMULAIRE */}
+        {selectedArtisan && (
+          <section
+            style={{
+              marginTop: 40,
+              padding: 20,
+              border: "1px solid #ddd",
+              borderRadius: 12,
+              maxWidth: 600,
+              marginInline: "auto",
             }}
           >
-            <input
-              required
-              placeholder="Votre nom"
-              style={{ width: "100%", padding: 10, marginBottom: 10 }}
-            />
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <h2 style={{ marginTop: 0 }}>
+                Contacter {selectedArtisan.prenom} {selectedArtisan.nom}
+              </h2>
+              <button
+                onClick={() => setSelectedArtisan(null)}
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  cursor: "pointer",
+                  fontSize: 18,
+                }}
+                aria-label="Fermer"
+              >
+                ✕
+              </button>
+            </div>
 
-            <input
-              required
-              type="email"
-              placeholder="Votre email"
-              style={{ width: "100%", padding: 10, marginBottom: 10 }}
-            />
-
-            <select
-              required
-              style={{ width: "100%", padding: 10, marginBottom: 10 }}
-            >
-              <option value="">Type de demande</option>
-              <option>Renseignement</option>
-              <option>Prestation</option>
-              <option>Tarif</option>
-            </select>
-
-            <textarea
-              required
-              placeholder="Votre message"
-              rows={4}
-              style={{ width: "100%", padding: 10, marginBottom: 10 }}
-            />
-
-            <button
-              type="submit"
-              style={{
-                padding: "10px 14px",
-                borderRadius: 10,
-                border: "1px solid #ccc",
-                background: "#fff",
-                cursor: "pointer",
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                alert(
+                  "Formulaire OK. Étape suivante : envoi email via le backend."
+                );
               }}
             >
-              Envoyer la demande
-            </button>
-          </form>
-        </section>
-      )}
+              <input
+                required
+                name="name"
+                placeholder="Votre nom"
+                style={{
+                  width: "100%",
+                  padding: 10,
+                  marginBottom: 10,
+                  borderRadius: 10,
+                  border: "1px solid #ddd",
+                }}
+              />
+
+              <input
+                required
+                type="email"
+                name="email"
+                placeholder="Votre email"
+                style={{
+                  width: "100%",
+                  padding: 10,
+                  marginBottom: 10,
+                  borderRadius: 10,
+                  border: "1px solid #ddd",
+                }}
+              />
+
+              <select
+                required
+                name="type"
+                style={{
+                  width: "100%",
+                  padding: 10,
+                  marginBottom: 10,
+                  borderRadius: 10,
+                  border: "1px solid #ddd",
+                }}
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Type de demande
+                </option>
+                <option value="renseignement">Renseignement</option>
+                <option value="prestation">Prestation</option>
+                <option value="tarif">Tarif</option>
+              </select>
+
+              <textarea
+                required
+                name="message"
+                placeholder="Votre message"
+                rows={4}
+                style={{
+                  width: "100%",
+                  padding: 10,
+                  marginBottom: 10,
+                  borderRadius: 10,
+                  border: "1px solid #ddd",
+                }}
+              />
+
+              <button
+                type="submit"
+                style={{
+                  padding: "10px 14px",
+                  borderRadius: 10,
+                  border: "1px solid #ccc",
+                  background: "#fff",
+                  cursor: "pointer",
+                }}
+              >
+                Envoyer la demande
+              </button>
+            </form>
+          </section>
+        )}
+      </main>
 
       <footer
         style={{
