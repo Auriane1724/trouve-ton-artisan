@@ -9,6 +9,7 @@ const sequelize = require("./config/database");
 const { Artisan, Metier } = require("./models");
 
 const app = express();
+app.set("trust proxy", 1);
 
 /**
  * Sécurité HTTP (headers)
