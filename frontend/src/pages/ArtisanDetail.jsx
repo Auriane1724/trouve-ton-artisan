@@ -60,11 +60,35 @@ export default function ArtisanDetail() {
       <h2>Formulaire de contact</h2>
 
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
-          alert("Formulaire OK. Prochaine étape : envoi réel via le backend.");
+          const form = new FormData(e.currentTarget);
+
+          const payload = {
+            artisanId: artisan.id,
+            name: form.get("name"),
+            email: form.get("email"),
+            type: form.get("type"),
+            message: form.get("message"),
+          };
+
+          const API_URL =
+            import.meta.env.VITE_API_URL || "http://localhost:3001";
+
+          try {
+            const res = await fetch(`${API_URL}/contact`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) throw new Error("Erreur envoi");
+            alert("✅ Demande envoyée !");
+            e.currentTarget.reset();
+          } catch (err) {
+            alert("❌ Erreur : impossible d’envoyer la demande.");
+          }
         }}
-        style={{ maxWidth: 600 }}
       >
         <input
           required

@@ -91,6 +91,30 @@ app.get("/artisans", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
+app.post("/contact", async (req, res) => {
+  try {
+    const { artisanId, name, email, type, message } = req.body;
+
+    if (!artisanId || !name || !email || !type || !message) {
+      return res.status(400).json({ error: "Champs manquants" });
+    }
+
+    // Insertion SQL simple via Sequelize (connexion existante)
+    await sequelize.query(
+      `INSERT INTO contact_message (artisan_id, requester_name, requester_email, request_type, message)
+       VALUES (?, ?, ?, ?, ?)`,
+      {
+        replacements: [artisanId, name, email, type, message],
+      }
+    );
+
+    return res.json({ status: "Demande enregistrée" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`API running on http://localhost:${PORT}`);
 });
