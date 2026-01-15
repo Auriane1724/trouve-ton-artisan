@@ -16,19 +16,21 @@ export default function Home() {
         if (!res.ok) throw new Error("Erreur API");
         return res.json();
       })
-      .then((data) => setArtisans(data))
+      .then((data) => setArtisans(Array.isArray(data) ? data : []))
       .catch(() => setError("Load failed"))
       .finally(() => setLoading(false));
   }, []);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return artisans;
+    if (!q) return [];
 
     return artisans.filter((a) => {
       const metiers = (a.Metiers || []).map((m) => m.nom).join(" ");
-      const blob =
-        `${a.nom} ${a.prenom} ${a.ville} ${a.code_postal} ${metiers}`.toLowerCase();
+      const blob = `${a.nom ?? ""} ${a.prenom ?? ""} ${a.ville ?? ""} ${
+        a.code_postal ?? ""
+      } ${metiers}`.toLowerCase();
+
       return blob.includes(q);
     });
   }, [artisans, query]);
@@ -38,6 +40,7 @@ export default function Home() {
 
   return (
     <div style={{ fontFamily: "system-ui" }}>
+      {/* HEADER */}
       <header
         style={{
           display: "flex",
@@ -57,12 +60,13 @@ export default function Home() {
             Plateforme des artisans – Auvergne-Rhône-Alpes
           </h1>
           <p style={{ margin: 0, color: "#666" }}>
-            Trouvez un artisan et demandez un renseignement / prestation / tarif
+            Recherchez un artisan et contactez-le facilement
           </p>
         </div>
       </header>
 
       <main style={{ padding: 20, maxWidth: 900, margin: "0 auto" }}>
+        {/* RECHERCHE */}
         <label style={{ display: "block", marginBottom: 8 }}>
           Rechercher un artisan (nom, ville, métier)
         </label>
@@ -79,52 +83,71 @@ export default function Home() {
           }}
         />
 
-        <p style={{ marginTop: 10, color: "#666" }}>
-          {filtered.length} artisan(s) trouvé(s)
-        </p>
+        {/* AFFICHAGE CONDITIONNEL */}
+        {query.trim() === "" ? (
+          <p style={{ marginTop: 16, color: "#666" }}>
+            Tapez un nom, une ville ou un métier pour rechercher un artisan.
+          </p>
+        ) : (
+          <>
+            <p style={{ marginTop: 10, color: "#666" }}>
+              {filtered.length} artisan(s) trouvé(s)
+            </p>
 
-        <ul style={{ listStyle: "none", padding: 0, display: "grid", gap: 12 }}>
-          {filtered.map((a) => (
-            <li
-              key={a.id}
+            <ul
               style={{
-                border: "1px solid #ddd",
-                borderRadius: 12,
-                padding: 14,
+                listStyle: "none",
+                padding: 0,
+                display: "grid",
+                gap: 12,
               }}
             >
-              <h2 style={{ margin: 0 }}>
-                {a.prenom} {a.nom}
-              </h2>
+              {filtered.map((a) => (
+                <li
+                  key={a.id}
+                  style={{
+                    border: "1px solid #ddd",
+                    borderRadius: 12,
+                    padding: 14,
+                  }}
+                >
+                  <h2 style={{ margin: 0 }}>
+                    {(a.prenom ?? "").trim()} {a.nom}
+                  </h2>
 
-              <p style={{ margin: "6px 0" }}>
-                <strong>Ville :</strong> {a.ville} ({a.code_postal})
-              </p>
+                  <p style={{ margin: "6px 0" }}>
+                    <strong>Ville :</strong> {a.ville ?? "—"}{" "}
+                    {a.code_postal ? `(${a.code_postal})` : ""}
+                  </p>
 
-              <p style={{ margin: "6px 0" }}>
-                <strong>Métiers :</strong>{" "}
-                {a.Metiers?.map((m) => m.nom).join(", ") || "—"}
-              </p>
+                  <p style={{ margin: "6px 0" }}>
+                    <strong>Métiers :</strong>{" "}
+                    {a.Metiers?.map((m) => m.nom).join(", ") || "—"}
+                  </p>
 
-              <p style={{ margin: "6px 0" }}>{a.description}</p>
+                  {a.description ? (
+                    <p style={{ margin: "6px 0" }}>{a.description}</p>
+                  ) : null}
 
-              <Link
-                to={`/artisans/${a.id}`}
-                style={{
-                  display: "inline-block",
-                  marginTop: 8,
-                  padding: "10px 12px",
-                  borderRadius: 10,
-                  border: "1px solid #ccc",
-                  textDecoration: "none",
-                  color: "inherit",
-                }}
-              >
-                Voir la fiche & contacter
-              </Link>
-            </li>
-          ))}
-        </ul>
+                  <Link
+                    to={`/artisans/${a.id}`}
+                    style={{
+                      display: "inline-block",
+                      marginTop: 8,
+                      padding: "10px 12px",
+                      borderRadius: 10,
+                      border: "1px solid #ccc",
+                      textDecoration: "none",
+                      color: "inherit",
+                    }}
+                  >
+                    Voir la fiche & contacter
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
       </main>
 
       <footer

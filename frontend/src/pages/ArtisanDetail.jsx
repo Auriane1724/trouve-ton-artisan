@@ -7,6 +7,8 @@ export default function ArtisanDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const [sending, setSending] = useState(false);
+
   useEffect(() => {
     const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
@@ -16,7 +18,9 @@ export default function ArtisanDetail() {
         return res.json();
       })
       .then((data) => {
-        const found = data.find((a) => String(a.id) === String(id));
+        const found = (Array.isArray(data) ? data : []).find(
+          (a) => String(a.id) === String(id)
+        );
         setArtisan(found || null);
       })
       .catch(() => setError("Load failed"))
@@ -37,15 +41,16 @@ export default function ArtisanDetail() {
       }}
     >
       <Link to="/" style={{ textDecoration: "none" }}>
-        ← Retour
+        ← Retour à la recherche
       </Link>
 
       <h1 style={{ marginTop: 12 }}>
-        {artisan.prenom} {artisan.nom}
+        {(artisan.prenom ?? "").trim()} {artisan.nom}
       </h1>
 
       <p>
-        <strong>Ville :</strong> {artisan.ville} ({artisan.code_postal})
+        <strong>Ville :</strong> {artisan.ville ?? "—"}{" "}
+        {artisan.code_postal ? `(${artisan.code_postal})` : ""}
       </p>
 
       <p>
@@ -53,7 +58,7 @@ export default function ArtisanDetail() {
         {artisan.Metiers?.map((m) => m.nom).join(", ") || "—"}
       </p>
 
-      <p>{artisan.description}</p>
+      {artisan.description ? <p>{artisan.description}</p> : null}
 
       <hr style={{ margin: "20px 0" }} />
 
@@ -62,6 +67,7 @@ export default function ArtisanDetail() {
       <form
         onSubmit={async (e) => {
           e.preventDefault();
+
           const form = new FormData(e.currentTarget);
 
           const payload = {
@@ -76,6 +82,7 @@ export default function ArtisanDetail() {
             import.meta.env.VITE_API_URL || "http://localhost:3001";
 
           try {
+            setSending(true);
             const res = await fetch(`${API_URL}/contact`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -83,12 +90,16 @@ export default function ArtisanDetail() {
             });
 
             if (!res.ok) throw new Error("Erreur envoi");
+
             alert("✅ Demande envoyée !");
             e.currentTarget.reset();
           } catch (err) {
             alert("❌ Erreur : impossible d’envoyer la demande.");
+          } finally {
+            setSending(false);
           }
         }}
+        style={{ maxWidth: 600 }}
       >
         <input
           required
@@ -100,8 +111,10 @@ export default function ArtisanDetail() {
             marginBottom: 10,
             borderRadius: 10,
             border: "1px solid #ddd",
+            fontSize: 16,
           }}
         />
+
         <input
           required
           type="email"
@@ -113,8 +126,10 @@ export default function ArtisanDetail() {
             marginBottom: 10,
             borderRadius: 10,
             border: "1px solid #ddd",
+            fontSize: 16,
           }}
         />
+
         <select
           required
           name="type"
@@ -125,6 +140,7 @@ export default function ArtisanDetail() {
             marginBottom: 10,
             borderRadius: 10,
             border: "1px solid #ddd",
+            fontSize: 16,
           }}
         >
           <option value="" disabled>
@@ -134,6 +150,7 @@ export default function ArtisanDetail() {
           <option value="prestation">Prestation</option>
           <option value="tarif">Tarif</option>
         </select>
+
         <textarea
           required
           name="message"
@@ -145,20 +162,23 @@ export default function ArtisanDetail() {
             marginBottom: 10,
             borderRadius: 10,
             border: "1px solid #ddd",
+            fontSize: 16,
           }}
         />
 
         <button
           type="submit"
+          disabled={sending}
           style={{
             padding: "10px 14px",
             borderRadius: 10,
             border: "1px solid #ccc",
             background: "#fff",
-            cursor: "pointer",
+            cursor: sending ? "not-allowed" : "pointer",
+            fontSize: 16,
           }}
         >
-          Envoyer la demande
+          {sending ? "Envoi en cours..." : "Envoyer la demande"}
         </button>
       </form>
     </div>
