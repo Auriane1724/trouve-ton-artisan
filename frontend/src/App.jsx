@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "./components/Header.jsx";
 import Footer from "./components/Footer.jsx";
 import Home from "./pages/Home.jsx";
@@ -8,18 +8,25 @@ import Legal from "./pages/Legal.jsx";
 import Category from "./pages/Category.jsx";
 
 export default function App() {
-  // ⚠️ Pour l’instant en dur. Étape suivante : alimenté depuis la BDD.
-  const categories = useMemo(
-    () => [
-      { slug: "batiment", label: "Bâtiment" },
-      { slug: "services", label: "Services" },
-      { slug: "fabrication", label: "Fabrication" },
-      { slug: "alimentation", label: "Alimentation" },
-    ],
-    []
-  );
-
+  const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+
+    fetch(`${API_URL}/categories`)
+      .then((res) => res.json())
+      .then((data) => setCategories(Array.isArray(data) ? data : []))
+      .catch(() =>
+        setCategories([
+          // fallback si l’API est indispo
+          { slug: "batiment", label: "Bâtiment" },
+          { slug: "services", label: "Services" },
+          { slug: "fabrication", label: "Fabrication" },
+          { slug: "alimentation", label: "Alimentation" },
+        ])
+      );
+  }, []);
 
   return (
     <div className="app-shell">
