@@ -114,6 +114,17 @@ app.post("/contact", async (req, res) => {
     return res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.get("/categories", async (req, res) => {
+  try {
+    const [rows] = await sequelize.query(
+      "SELECT id, label, slug FROM categorie ORDER BY id ASC"
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`API running on http://localhost:${PORT}`);
