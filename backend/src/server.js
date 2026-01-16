@@ -125,6 +125,28 @@ app.get("/categories", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+app.get("/categories/:slug/artisans", async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const [rows] = await sequelize.query(
+      `
+      SELECT a.id, a.nom, a.prenom, a.email, a.telephone, a.description, a.ville, a.code_postal
+      FROM categorie c
+      JOIN categorie_artisan ca ON ca.categorie_id = c.id
+      JOIN artisan a ON a.id = ca.artisan_id
+      WHERE c.slug = ?
+      ORDER BY a.nom ASC
+      `,
+      { replacements: [slug] }
+    );
+
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`API running on http://localhost:${PORT}`);
