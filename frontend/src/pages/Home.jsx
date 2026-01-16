@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import logoRegion from "../assets/Logo.png";
 
-export default function Home() {
+export default function Home({ searchQuery }) {
   const [artisans, setArtisans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [query, setQuery] = useState("");
 
   useEffect(() => {
     const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
@@ -22,145 +20,61 @@ export default function Home() {
   }, []);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = (searchQuery || "").trim().toLowerCase();
     if (!q) return [];
 
     return artisans.filter((a) => {
-      const metiers = (a.Metiers || []).map((m) => m.nom).join(" ");
-      const blob = `${a.nom ?? ""} ${a.prenom ?? ""} ${a.ville ?? ""} ${
-        a.code_postal ?? ""
-      } ${metiers}`.toLowerCase();
-
-      return blob.includes(q);
+      const nom = `${a.nom ?? ""}`.toLowerCase();
+      const prenom = `${a.prenom ?? ""}`.toLowerCase();
+      return nom.includes(q) || prenom.includes(q);
     });
-  }, [artisans, query]);
+  }, [artisans, searchQuery]);
 
-  if (loading) return <p style={{ padding: 20 }}>Chargement…</p>;
-  if (error) return <p style={{ padding: 20 }}>Erreur : {error}</p>;
+  if (loading) return <p className="page">Chargement…</p>;
+  if (error) return <p className="page">Erreur : {error}</p>;
 
   return (
-    <div style={{ fontFamily: "system-ui" }}>
-      {/* HEADER */}
-      <header
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 16,
-          padding: "16px 20px",
-          borderBottom: "1px solid #e5e5e5",
-        }}
-      >
-        <img
-          src={logoRegion}
-          alt="Région Auvergne-Rhône-Alpes"
-          style={{ height: 42 }}
-        />
-        <div>
-          <h1 style={{ margin: 0, fontSize: 22 }}>
-            Plateforme des artisans – Auvergne-Rhône-Alpes
-          </h1>
-          <p style={{ margin: 0, color: "#666" }}>
-            Recherchez un artisan et contactez-le facilement
-          </p>
-        </div>
-      </header>
+    <div className="page">
+      <h1 className="page-title">Trouver un artisan</h1>
 
-      <main style={{ padding: 20, maxWidth: 900, margin: "0 auto" }}>
-        {/* RECHERCHE */}
-        <label style={{ display: "block", marginBottom: 8 }}>
-          Rechercher un artisan (nom, ville, métier)
-        </label>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Ex: plombier, Grenoble, Dupont…"
-          style={{
-            width: "100%",
-            padding: 12,
-            borderRadius: 10,
-            border: "1px solid #ddd",
-            fontSize: 16,
-          }}
-        />
+      {!searchQuery?.trim() ? (
+        <p className="muted">
+          Utilisez la barre de recherche en haut pour trouver un artisan par
+          nom.
+        </p>
+      ) : (
+        <>
+          <p className="muted">{filtered.length} artisan(s) trouvé(s)</p>
 
-        {/* AFFICHAGE CONDITIONNEL */}
-        {query.trim() === "" ? (
-          <p style={{ marginTop: 16, color: "#666" }}>
-            Tapez un nom, une ville ou un métier pour rechercher un artisan.
-          </p>
-        ) : (
-          <>
-            <p style={{ marginTop: 10, color: "#666" }}>
-              {filtered.length} artisan(s) trouvé(s)
-            </p>
+          <ul className="cards">
+            {filtered.map((a) => (
+              <li className="card" key={a.id}>
+                <h2 className="card-title">
+                  {(a.prenom ?? "").trim()} {a.nom}
+                </h2>
 
-            <ul
-              style={{
-                listStyle: "none",
-                padding: 0,
-                display: "grid",
-                gap: 12,
-              }}
-            >
-              {filtered.map((a) => (
-                <li
-                  key={a.id}
-                  style={{
-                    border: "1px solid #ddd",
-                    borderRadius: 12,
-                    padding: 14,
-                  }}
-                >
-                  <h2 style={{ margin: 0 }}>
-                    {(a.prenom ?? "").trim()} {a.nom}
-                  </h2>
+                <p className="card-line">
+                  <strong>Ville :</strong> {a.ville ?? "—"}{" "}
+                  {a.code_postal ? `(${a.code_postal})` : ""}
+                </p>
 
-                  <p style={{ margin: "6px 0" }}>
-                    <strong>Ville :</strong> {a.ville ?? "—"}{" "}
-                    {a.code_postal ? `(${a.code_postal})` : ""}
-                  </p>
+                <p className="card-line">
+                  <strong>Métiers :</strong>{" "}
+                  {a.Metiers?.map((m) => m.nom).join(", ") || "—"}
+                </p>
 
-                  <p style={{ margin: "6px 0" }}>
-                    <strong>Métiers :</strong>{" "}
-                    {a.Metiers?.map((m) => m.nom).join(", ") || "—"}
-                  </p>
+                {a.description ? (
+                  <p className="card-desc">{a.description}</p>
+                ) : null}
 
-                  {a.description ? (
-                    <p style={{ margin: "6px 0" }}>{a.description}</p>
-                  ) : null}
-
-                  <Link
-                    to={`/artisans/${a.id}`}
-                    style={{
-                      display: "inline-block",
-                      marginTop: 8,
-                      padding: "10px 12px",
-                      borderRadius: 10,
-                      border: "1px solid #ccc",
-                      textDecoration: "none",
-                      color: "inherit",
-                    }}
-                  >
-                    Voir la fiche & contacter
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-      </main>
-
-      <footer
-        style={{
-          marginTop: 40,
-          padding: 20,
-          borderTop: "1px solid #eee",
-          color: "#666",
-          textAlign: "center",
-        }}
-      >
-        © Région Auvergne-Rhône-Alpes — Plateforme artisans (projet étudiant)
-      </footer>
+                <Link className="btn" to={`/artisans/${a.id}`}>
+                  Voir la fiche & contacter
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
     </div>
   );
 }
