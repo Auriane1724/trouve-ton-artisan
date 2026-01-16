@@ -334,3 +334,91 @@ button:focus-visible {
     height: 64px; /* logo encore un peu plus grand sur mobile */
   }
 }
+.home-block {
+  margin-bottom: 22px;
+  padding: 16px;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.section-title {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+
+/* Comment trouver mon artisan ? */
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 10px;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+}
+
+.step-num {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+.step-text {
+  line-height: 1.3;
+}
+
+/* Artisans du mois */
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.month-card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.month-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.month-name {
+  margin: 0;
+  font-size: 18px;
+}
+
+.month-rating {
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.month-line {
+  margin: 6px 0;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .month-grid {
+    grid-template-columns: 1fr;
+  }
+}
