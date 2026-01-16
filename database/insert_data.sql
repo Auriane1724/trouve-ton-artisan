@@ -1,4 +1,4 @@
-USE trouve_ton_artisan;
+
 
 -- Métiers
 INSERT INTO metier (nom) VALUES
