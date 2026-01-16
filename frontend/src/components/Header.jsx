@@ -1,16 +1,18 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logoRegion from "../assets/Logo.png";
 
 export default function Header({ categories, onSearch }) {
   const [q, setQ] = useState("");
   const navigate = useNavigate();
 
+  // ✅ Recherche en live (dès qu'on tape)
+  useEffect(() => {
+    onSearch(q); // envoie aussi "" quand on vide le champ
+  }, [q, onSearch]);
+
   const submit = (e) => {
     e.preventDefault();
-    const value = q.trim();
-    if (!value) return;
-    onSearch(value); // déclenche la recherche
     navigate("/"); // ramène sur l'accueil (résultats visibles)
   };
 
@@ -40,7 +42,7 @@ export default function Header({ categories, onSearch }) {
             className="search-input"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Rechercher un artisan (nom)…"
+            placeholder="Rechercher un artisan (nom/prénom)…"
             aria-label="Rechercher un artisan par nom"
           />
           <button className="search-btn" type="submit">
